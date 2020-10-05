@@ -1,5 +1,6 @@
 package br.com.mardonio.resources;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,23 @@ public class PostResource {
 		return ResponseEntity.ok().body(obj);
 	}
 	
-	
 	@GetMapping("/titlesearch")
 	public ResponseEntity<List<Post>> findByTitle(@RequestParam(value = "text", defaultValue = "") String text){
 		text = URL.decodeParam(text);
 		List<Post> list = service.findByTitle(text);
+		return ResponseEntity.ok().body(list);
+	}	
+	
+	@GetMapping("/searchfull")
+	public ResponseEntity<List<Post>> searchfull(
+			@RequestParam(value = "text", defaultValue = "") String text,
+			@RequestParam(value = "minDate", defaultValue = "") String minDate,
+			@RequestParam(value = "maxDate", defaultValue = "") String maxDate){
+		text = URL.decodeParam(text);
+		Date min = URL.convertDate(minDate, new Date(0));
+		Date max = URL.convertDate(maxDate, new Date());
+		
+		List<Post> list = service.searchFull(text, min, max);
 		return ResponseEntity.ok().body(list);
 	}	
 }
